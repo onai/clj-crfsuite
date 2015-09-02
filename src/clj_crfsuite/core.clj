@@ -16,7 +16,6 @@
   (let [str-map (stringify-keys a-map)
         an-item (Item.)]
     (doseq [[k v] str-map]
-      (println k)
       (let [attr (if (string? v)
                    (Attribute. (str k ":" v) 1.0)
                    (Attribute. k (double v)))]
