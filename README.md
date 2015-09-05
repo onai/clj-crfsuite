@@ -6,7 +6,13 @@ Allows you to express sequences as clojure maps à la pycrfsuite.
 
 ## Usage
 
-## Training:
+### Lein artifact
+
+[![Clojars Project](http://clojars.org/clj-crfsuite/latest-version.svg)](http://clojars.org/clj-crfsuite)
+
+
+
+### Training:
 
 Pass in a sequence of training examples, a sequence of tags / labels and a model filename to save to.
 
@@ -22,7 +28,7 @@ Storing the model
 user=>
 ```
 
-## Tagging:
+### Tagging:
 
 Pass a sequence of features to be tagger with a model stored in `traimodel.crfsuite`. Returns a
 sequence of tag, probability pairs.
