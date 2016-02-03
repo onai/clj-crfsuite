@@ -3,5 +3,5 @@
   :url "https://github.com/onutech/clj-crfsuite"
   :license {:name "Apache V2 License"
             :url "https://raw.githubusercontent.com/onutech/clj-crfsuite/master/LICENSE"}
-  :dependencies [[org.clojure/clojure "1.6.0"]
+  :dependencies [[org.clojure/clojure "1.8.0"]
                  [com.github.vinhkhuc/jcrfsuite "0.6"]])
