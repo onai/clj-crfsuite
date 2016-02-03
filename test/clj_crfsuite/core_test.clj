@@ -1,14 +1,15 @@
 (ns clj-crfsuite.core-test
   (:require [clojure.test :refer :all]
             [clj-crfsuite.core :refer :all]
-            [me.raynes.fs :refer [delete]]))
+            [me.raynes.fs :refer [delete]])
+  (:import [clj_crfsuite.core Tag]))
 
 (defn delete-models-fixture
   [f]
   (f)
   (delete "trainmodel.crfsuite"))
 
-(use-fixtures :once delete-models-fixture)
+(use-fixtures :each delete-models-fixture)
 
 (deftest run-test
   (testing "train and test calls must just-work"
@@ -32,8 +33,10 @@
                "trainmodel.crfsuite")))
 
       (is
-       (= [["y3" 0.3548467376927597]]
-          (tag [{:feat1 2.0, :feat2 3.0}] "trainmodel.crfsuite")))
+       (= ["y3"]
+          (as-> [{:feat1 2.0, :feat2 3.0}] $
+            (tag $ "trainmodel.crfsuite")
+            (map :tag $))))
 
       (catch Exception e (is false)))))
 
@@ -64,8 +67,10 @@
                "trainmodel.crfsuite")))
 
       (is
-       (not
-        (nil?
-         (tag [{:feat1 true, :feat2 true}] "trainmodel.crfsuite"))))
+       (every?
+        (fn [x]
+          (instance? Tag
+                     x))
+        (tag [{:feat1 true, :feat2 true}] "trainmodel.crfsuite")))
 
       (catch Exception e (is false)))))
