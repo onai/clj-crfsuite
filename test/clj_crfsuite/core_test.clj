@@ -1,6 +1,14 @@
 (ns clj-crfsuite.core-test
   (:require [clojure.test :refer :all]
-            [clj-crfsuite.core :refer :all]))
+            [clj-crfsuite.core :refer :all]
+            [me.raynes.fs :refer [delete]]))
+
+(defn delete-models-fixture
+  [f]
+  (f)
+  (delete "trainmodel.crfsuite"))
+
+(use-fixtures :once delete-models-fixture)
 
 (deftest run-test
   (testing "train and test calls must just-work"
@@ -26,4 +34,5 @@
       (is
        (= [["y3" 0.3548467376927597]]
           (tag [{:feat1 2.0, :feat2 3.0}] "trainmodel.crfsuite")))
+
       (catch Exception e (is false)))))
