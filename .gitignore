@@ -1,3 +1,4 @@
+# Default java stuff
 /target
 /classes
 /checkouts
@@ -9,3 +10,6 @@ pom.xml.asc
 /.nrepl-port
 .hgignore
 .hg/
+
+# Remove any models made at test-time
+*.crfsuite
