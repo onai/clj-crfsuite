@@ -1,4 +1,4 @@
-(defproject clj-crfsuite "0.3.0"
+(defproject clj-crfsuite "0.4.0-SNAPSHOT"
   :description "Clojure wrapper for CRFSuite"
   :url "https://github.com/onutech/clj-crfsuite"
   :license {:name "Apache V2 License"
