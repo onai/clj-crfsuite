@@ -24,9 +24,17 @@
   (let [str-map (stringify-keys a-map)
         an-item (Item.)]
     (doseq [[k v] str-map]
-      (let [attr (if (string? v)
-                   (Attribute. (str k ":" v) 1.0)
-                   (Attribute. k (double v)))]
+      (let [attr (cond (string? v)
+                       (Attribute. (str k ":" v) 1.0)
+
+                       (instance? Boolean v)
+                       (Attribute. k (if v 1.0 0.0))
+
+                       (keyword? v)
+                       (Attribute. (str k ":" (name v)) 1.0)
+                       
+                       :else
+                       (Attribute. k (double v)))]
         (.add an-item
               attr)))
     an-item))
@@ -57,10 +65,13 @@
                                            y-str-seqs
                                            model-file)))
 
+(defrecord Tag [tag probability])
+
 (defn tag
   [x-seq model-file]
   (let [tagger      (com.github.jcrfsuite.CrfTagger. model-file)
         x-item-seq (to-item-seq x-seq)]
     (map (fn [a-pair]
-           [(.first a-pair) (.second a-pair)])
+           (Tag. (.first a-pair)
+                 (.second a-pair)))
          (.tag tagger x-item-seq))))
