@@ -1,5 +1,7 @@
 # clj-crfsuite
 
+[![Circle CI](https://circleci.com/gh/onutech/clj-crfsuite.svg?style=svg&circle-token=351e60b226583e6e24fece5d35f03fbb4f50d3bc)](https://circleci.com/gh/onutech/clj-crfsuite)
+
 Clojure interface to CRFSuite.
 
 Allows you to express sequences as clojure maps à la pycrfsuite.
@@ -41,6 +43,6 @@ user=> (tag [{:feat1 2.0, :feat2 3.0} {:feat1 3.0, :feat2 4.0}] "trainmodel.crfs
 
 ## License
 
-Copyright © 2015 Onu Technology, Inc.
+Copyright © 2015 - 2016 Onu Technology, Inc.
 
 Distributed under the Apache v2 License.
