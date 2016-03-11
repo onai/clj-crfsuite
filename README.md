@@ -30,6 +30,26 @@ Storing the model
 user=>
 ```
 
+You can also supply a vector of features (or an ndarray like `core.matrix`):
+
+```clojure
+      (train [
+              [
+               [1.0, 2.0],
+               [3.0, 4.0]
+               ]
+              [
+               [1.0, 2.0],
+               [3.0, 4.0]
+               ]
+              ]
+             
+             [["y3", "y4"]
+              ["y3", "y4"]]
+
+             "trainmodel.crfsuite")
+```
+
 ### Tagging:
 
 Pass a sequence of features to be tagger with a model stored in `traimodel.crfsuite`. Returns a
