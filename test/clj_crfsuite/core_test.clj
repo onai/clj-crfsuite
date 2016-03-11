@@ -73,4 +73,23 @@
                      x))
         (tag [{:feat1 true, :feat2 true}] "trainmodel.crfsuite")))
 
-      (catch Exception e (is false)))))
+      (catch Exception e (is false))))
+
+  (testing "are vector supported"
+    (is
+     (nil?
+      (train [
+              [
+               [1.0, 2.0],
+               [3.0, 4.0]
+               ]
+              [
+               [1.0, 2.0],
+               [3.0, 4.0]
+               ]
+              ]
+             
+             [["y3", "y4"]
+              ["y3", "y4"]]
+
+             "trainmodel.crfsuite")))))

@@ -15,29 +15,51 @@
          ItemSequence
          StringList])
 
-(defn to-item
-  "Allows you to specify an item in the following formats:
-   1. {:feat1 :val1, :feat2 :val2}
-   2. {:feat1 2.0, :feat2 3.0}
-   3. {:feat1 true, :feat2 3.0}"
+(defn to-item-map
   [a-map]
+  (println a-map)
   (let [str-map (stringify-keys a-map)
         an-item (Item.)]
     (doseq [[k v] str-map]
       (let [attr (cond (string? v)
                        (Attribute. (str k ":" v) 1.0)
-
+                       
                        (instance? Boolean v)
                        (Attribute. k (if v 1.0 0.0))
-
+                       
                        (keyword? v)
                        (Attribute. (str k ":" (name v)) 1.0)
-                       
+                         
                        :else
                        (Attribute. k (double v)))]
         (.add an-item
               attr)))
     an-item))
+
+(defn to-item-sequential
+  [a-seq]
+  (let [the-map (into
+                 {}
+                 (map-indexed
+                  (fn [i x]
+                    [(-> i
+                         str
+                         keyword) x])
+                  a-seq))]
+    (println the-map)
+    (to-item-map the-map)))
+
+(defn to-item
+  "Allows you to specify an item in the following formats:
+   1. {:feat1 :val1, :feat2 :val2}
+   2. {:feat1 2.0, :feat2 3.0}
+   3. {:feat1 true, :feat2 3.0}"
+  [item]
+  (cond (map? item)
+        (to-item-map item)
+
+        (sequential? item)
+        (to-item-sequential item)))
 
 (defn to-item-seq
   "A collection of maps is an itemsequence"
