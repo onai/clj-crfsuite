@@ -34,9 +34,10 @@
 
       (is
        (= ["y3"]
-          (as-> [{:feat1 2.0, :feat2 3.0}] $
-            (tag $ "trainmodel.crfsuite")
-            (map :tag $))))
+          (let [model (get-tagger "trainmodel.crfsuite")]
+           (as-> [{:feat1 2.0, :feat2 3.0}] $
+             (tag $ model)
+             (map :tag $)))))
 
       (catch Exception e (is false)))))
 
@@ -71,7 +72,8 @@
         (fn [x]
           (instance? Tag
                      x))
-        (tag [{:feat1 true, :feat2 true}] "trainmodel.crfsuite")))
+        (let [model (get-tagger "trainmodel.crfsuite")]
+          (tag [{:feat1 true, :feat2 true}] model))))
 
       (catch Exception e (is false))))
 
