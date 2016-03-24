@@ -57,7 +57,10 @@ sequence of tag, probability pairs.
 
 ```clojure
 user=> (tag [{:feat1 2.0, :feat2 3.0} {:feat1 3.0, :feat2 4.0}] "trainmodel.crfsuite")
-(["y1" 0.43526113123400284] ["y3" 0.36107961034023944])
+[
+  [{:tag "y1"} {:probability 0.43526113123400284}] ;; instances of type clj-crfsuite.core.Tag
+  [{:tag "y3"} {:probability 0.36107961034023944}]
+])
 ```
 
 
