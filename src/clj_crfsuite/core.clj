@@ -16,8 +16,8 @@
          StringList])
 
 (defn to-item-map
+  "Convert clojure maps to an ItemSequence"
   [a-map]
-  (println a-map)
   (let [str-map (stringify-keys a-map)
         an-item (Item.)]
     (doseq [[k v] str-map]
@@ -37,6 +37,7 @@
     an-item))
 
 (defn to-item-sequential
+  "Convert clojure seqs to an ItemSequence."
   [a-seq]
   (let [the-map (into
                  {}
@@ -46,7 +47,6 @@
                          str
                          keyword) x])
                   a-seq))]
-    (println the-map)
     (to-item-map the-map)))
 
 (defn to-item
@@ -89,10 +89,13 @@
 
 (defrecord Tag [tag probability])
 
+(defn get-tagger
+  [model-file]
+  (com.github.jcrfsuite.CrfTagger. model-file))
+
 (defn tag
-  [x-seq model-file]
-  (let [tagger      (com.github.jcrfsuite.CrfTagger. model-file)
-        x-item-seq (to-item-seq x-seq)]
+  [x-seq tagger]
+  (let [x-item-seq (to-item-seq x-seq)]
     (map (fn [a-pair]
            (Tag. (.first a-pair)
                  (.second a-pair)))
