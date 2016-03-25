@@ -6,7 +6,7 @@
 
 Clojure interface to [CRFSuite](http://www.chokkan.org/software/crfsuite/) - a fast linear-chain CRF library.
 
-Works with clojure data structures.
+This is a thin wrapper around [jcrfsuite](https://github.com/vinhkhuc/jcrfsuite/) so we can use clojure data structures.
 
 ## Usage
 

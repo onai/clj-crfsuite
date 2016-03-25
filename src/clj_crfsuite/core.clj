@@ -1,8 +1,9 @@
 (ns clj-crfsuite.core
   (:require [clojure.walk :refer [stringify-keys]]))
 
-;; need to do this again. classloaders change and
-;; the existing stubs are orphaned.
+;; this method loads the appropriate .sos etc.
+;; ideally run on import but clojure 1.8 breaks
+;; some classloader stuff this library depends on.
 (com.github.jcrfsuite.util.CrfSuiteLoader/load)
 
 ;; re-import libraries - now clojure and java should
@@ -50,10 +51,8 @@
     (to-item-map the-map)))
 
 (defn to-item
-  "Allows you to specify an item in the following formats:
-   1. {:feat1 :val1, :feat2 :val2}
-   2. {:feat1 2.0, :feat2 3.0}
-   3. {:feat1 true, :feat2 3.0}"
+  "Convert a feature-vector into an Item
+  - interal CRFSuite type."
   [item]
   (cond (map? item)
         (to-item-map item)
@@ -62,7 +61,9 @@
         (to-item-sequential item)))
 
 (defn to-item-seq
-  "A collection of maps is an itemsequence"
+  "Convert a clojure sequence to an ItemSequence.
+  ItemSequence is a CRFSuite type - a collection
+  of feature vectors"
   [a-seq]
   (let [item-seq (ItemSequence.)]
     (doseq [a-map a-seq]
@@ -72,6 +73,8 @@
     item-seq))
 
 (defn to-string-list
+  "[String.] -> StringList.
+  StringList. is an internal CRFSuite type"
   [a-str-vector]
   (let [s-list (StringList.)]
     (doseq [s a-str-vector]
@@ -80,6 +83,11 @@
     s-list))
 
 (defn train
+  "Trains a crf model and saves it to disk.
+  Args:
+   x-seqs : A list of a sequence of feature-vectors.
+   y-seqs : A list of sequence of tags
+   model-file : Destination to write model to."
   [x-seqs y-seqs model-file]
   (let [x-item-seqs (map to-item-seq x-seqs)
         y-str-seqs  (map to-string-list y-seqs)]
@@ -90,10 +98,18 @@
 (defrecord Tag [tag probability])
 
 (defn get-tagger
+  "Loads a crf model from supplied location"
   [model-file]
   (com.github.jcrfsuite.CrfTagger. model-file))
 
 (defn tag
+  "Given a sequence of features, produce a sequence
+  of tags.
+  Args:
+   x-seq : A sequence of feature-vectors
+   tagger: A crf model
+  Returns:
+   A sequence of tags"
   [x-seq tagger]
   (let [x-item-seq (to-item-seq x-seq)]
     (map (fn [a-pair]
