@@ -2,9 +2,11 @@
 
 [![Circle CI](https://circleci.com/gh/onutech/clj-crfsuite.svg?style=svg&circle-token=351e60b226583e6e24fece5d35f03fbb4f50d3bc)](https://circleci.com/gh/onutech/clj-crfsuite)
 
-Clojure interface to CRFSuite.
+<img src="Crf1.png" />
 
-Allows you to express sequences as clojure maps à la pycrfsuite.
+Clojure interface to [CRFSuite](http://www.chokkan.org/software/crfsuite/) - a fast linear-chain CRF library.
+
+This is a thin wrapper around [jcrfsuite](https://github.com/vinhkhuc/jcrfsuite/) so we can use clojure data structures.
 
 ## Usage
 
@@ -12,14 +14,37 @@ Allows you to express sequences as clojure maps à la pycrfsuite.
 
 [![Clojars Project](http://clojars.org/clj-crfsuite/latest-version.svg)](http://clojars.org/clj-crfsuite)
 
+A linear chain CRF produces one symbol per output feature. For a simple task like POS-tagging:
 
+```
+NP --- conj --- NP --- VP --- dobj
+|       |       |      |       |
+|       |       |      |       |
+John   and     mary   like    apples
+```
+
+The CRF is supplied english words (or some features corresponding to english words). The output is the POS tags.
 
 ### Training:
 
-Pass in a sequence of training examples, a sequence of tags / labels and a model filename to save to.
+Args:
+
+ * `xs` : A list of sequences. A sequence is a clojure sequence of feature-vectors or feature-maps (a map from feature -> value).
+ * `ys` : Tags corresponding to sequences in xs.
+ * `model-file` : Location to dump model to.
 
 ```clojure
-user=> (train [[{:feat1 2.0, :feat2 3.0} {:feat1 3.0, :feat2 4.0}] [{:feat1 2.0, :feat2 3.0} {:feat1 4.0, :feat2 5.0}]] [["y1", "y2"], ["y1", "y3"]] "trainmodel.crfsuite")
+user=> (train [
+               [{:feat1 2.0, :feat2 3.0}
+                {:feat1 3.0, :feat2 4.0}] ; the first sequence of features
+			   [{:feat1 2.0, :feat2 3.0}
+			    {:feat1 4.0, :feat2 5.0}] ; the second sequence of features
+			   ]
+		      [
+			   ["y1", "y2"], ; tag-sequence
+			   ["y1", "y3"]  ; tag-sequence
+		       ]
+		      "trainmodel.crfsuite") ; destination
 .
 .
 .
@@ -30,7 +55,7 @@ Storing the model
 user=>
 ```
 
-You can also supply a vector of features (or an ndarray like `core.matrix`):
+You can also supply a vector of features (or an ndarray like `core.matrix` matrices):
 
 ```clojure
       (train [
