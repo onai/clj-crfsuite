@@ -1,5 +1,6 @@
 (ns clj-crfsuite.core
-  (:require [clojure.walk :refer [stringify-keys]]))
+  (:require [clojure.walk :refer [stringify-keys]]
+            [schema.core :as s]))
 
 ;; this method loads the appropriate .sos etc.
 ;; ideally run on import but clojure 1.8 breaks
@@ -16,9 +17,16 @@
          ItemSequence
          StringList])
 
+(s/defschema FeatureVector [s/Num])
+(s/defschema FeatureMap {s/Any
+                         (s/cond-pre s/Num s/Str s/Keyword s/Bool)})
+(s/defschema FeatureSequence [(s/cond-pre FeatureVector FeatureMap)])
+
 (defn to-item-map
-  "Convert clojure maps to an ItemSequence"
+  "Convert a feature map to an Item -
+  an internal CRFSuite type"
   [a-map]
+  (s/validate FeatureMap a-map)
   (let [str-map (stringify-keys a-map)
         an-item (Item.)]
     (doseq [[k v] str-map]
@@ -38,8 +46,9 @@
     an-item))
 
 (defn to-item-sequential
-  "Convert clojure seqs to an ItemSequence."
+  "Convert a feature vector to an Item"
   [a-seq]
+  (s/validate FeatureVector a-seq)
   (let [the-map (into
                  {}
                  (map-indexed
@@ -65,6 +74,7 @@
   ItemSequence is a CRFSuite type - a collection
   of feature vectors"
   [a-seq]
+  (s/validate FeatureSequence a-seq)
   (let [item-seq (ItemSequence.)]
     (doseq [a-map a-seq]
       (let [item (to-item a-map)]
@@ -89,6 +99,7 @@
    y-seqs : A list of sequence of tags
    model-file : Destination to write model to."
   [x-seqs y-seqs model-file]
+  (s/validate [FeatureSequence] x-seqs)
   (let [x-item-seqs (map to-item-seq x-seqs)
         y-str-seqs  (map to-string-list y-seqs)]
     (com.github.jcrfsuite.CrfTrainer/train x-item-seqs
@@ -111,6 +122,7 @@
   Returns:
    A sequence of tags"
   [x-seq tagger]
+  (s/validate FeatureSequence x-seq)
   (let [x-item-seq (to-item-seq x-seq)]
     (map (fn [a-pair]
            (Tag. (.first a-pair)
