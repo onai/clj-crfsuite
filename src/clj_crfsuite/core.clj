@@ -22,11 +22,10 @@
                          (s/cond-pre s/Num s/Str s/Keyword s/Bool)})
 (s/defschema FeatureSequence [(s/cond-pre FeatureVector FeatureMap)])
 
-(defn to-item-map
+(s/defn to-item-map :- Item
   "Convert a feature map to an Item -
   an internal CRFSuite type"
-  [a-map]
-  (s/validate FeatureMap a-map)
+  [a-map :- FeatureMap]
   (let [str-map (stringify-keys a-map)
         an-item (Item.)]
     (doseq [[k v] str-map]
@@ -45,10 +44,9 @@
               attr)))
     an-item))
 
-(defn to-item-sequential
+(s/defn to-item-sequential :- Item
   "Convert a feature vector to an Item"
-  [a-seq]
-  (s/validate FeatureVector a-seq)
+  [a-seq :- FeatureVector]
   (let [the-map (into
                  {}
                  (map-indexed
@@ -69,12 +67,11 @@
         (sequential? item)
         (to-item-sequential item)))
 
-(defn to-item-seq
+(s/defn to-item-seq :- ItemSequence
   "Convert a clojure sequence to an ItemSequence.
   ItemSequence is a CRFSuite type - a collection
   of feature vectors"
-  [a-seq]
-  (s/validate FeatureSequence a-seq)
+  [a-seq :- FeatureSequence]
   (let [item-seq (ItemSequence.)]
     (doseq [a-map a-seq]
       (let [item (to-item a-map)]
@@ -82,38 +79,37 @@
               item)))
     item-seq))
 
-(defn to-string-list
+(s/defn to-string-list :- StringList
   "[String.] -> StringList.
   StringList. is an internal CRFSuite type"
-  [a-str-vector]
+  [a-str-vector :- [s/Str]]
   (let [s-list (StringList.)]
     (doseq [s a-str-vector]
       (.add s-list
             (name s)))
     s-list))
 
-(defn train
+(s/defn train
   "Trains a crf model and saves it to disk.
   Args:
    x-seqs : A list of a sequence of feature-vectors.
    y-seqs : A list of sequence of tags
    model-file : Destination to write model to."
-  [x-seqs y-seqs model-file]
-  (s/validate [FeatureSequence] x-seqs)
+  [x-seqs :- FeatureSequence y-seqs model-file]
   (let [x-item-seqs (map to-item-seq x-seqs)
         y-str-seqs  (map to-string-list y-seqs)]
     (com.github.jcrfsuite.CrfTrainer/train x-item-seqs
                                            y-str-seqs
                                            model-file)))
 
-(defrecord Tag [tag probability])
+(s/defrecord Tag [tag :- s/Str probability :- s/Num])
 
 (defn get-tagger
   "Loads a crf model from supplied location"
   [model-file]
-  (com.github.jcrfsuite.CrfTagger. model-file))
+  (CrfTagger. model-file))
 
-(defn tag
+(s/defn tag :- [Tag]
   "Given a sequence of features, produce a sequence
   of tags.
   Args:
@@ -121,8 +117,9 @@
    tagger: A crf model
   Returns:
    A sequence of tags"
-  [x-seq tagger]
-  (s/validate FeatureSequence x-seq)
+  [x-seq :- FeatureSequence
+   tagger :- CrfTagger]
+  
   (let [x-item-seq (to-item-seq x-seq)]
     (map (fn [a-pair]
            (Tag. (.first a-pair)
