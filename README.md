@@ -1,6 +1,6 @@
 # clj-crfsuite
 
-[![Circle CI](https://circleci.com/gh/onutech/clj-crfsuite.svg?style=svg&circle-token=351e60b226583e6e24fece5d35f03fbb4f50d3bc)](https://circleci.com/gh/onutech/clj-crfsuite)
+[![Circle CI](https://circleci.com/gh/onutech/clj-crfsuite.svg?style=svg&circle-token=a06dccf4c61b8e867163eebf974cf0eaa2eaa2cf)](https://circleci.com/gh/onutech/clj-crfsuite)
 
 <img src="Crf1.png" />
 
