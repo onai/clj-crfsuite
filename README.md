@@ -77,7 +77,7 @@ You can also supply a vector of features (or an ndarray like `core.matrix` matri
 
 ### Tagging:
 
-Pass a sequence of features to be tagger with a model stored in `traimodel.crfsuite`. Returns a
+Pass a sequence of features to be tagged with a model stored in `traimodel.crfsuite`. Returns a
 sequence of tag, probability pairs.
 
 ```clojure
